@@ -1,0 +1,14 @@
+[
+  {
+    "deviceId": "DEV001",
+    "deviceName": "Cisco ASR 1001",
+    "status": "Online",
+    "location": "Atlanta"
+  },
+  {
+    "deviceId": "DEV002",
+    "deviceName": "Calix OLT-02",
+    "status": "Offline",
+    "location": "Roswell"
+  }
+]

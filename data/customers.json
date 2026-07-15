@@ -1,0 +1,14 @@
+[
+  {
+    "customerId": "CUST001",
+    "customerName": "Acme Corp",
+    "serviceType": "Fiber",
+    "status": "Active"
+  },
+  {
+    "customerId": "CUST002",
+    "customerName": "Smith Home",
+    "serviceType": "Broadband",
+    "status": "Active"
+  }
+]

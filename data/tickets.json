@@ -1,0 +1,14 @@
+[
+  {
+    "ticketNumber": "TN001",
+    "title": "Login Issue",
+    "severity": "P1",
+    "status": "Open"
+  },
+  {
+    "ticketNumber": "TN002",
+    "title": "Slow Speed",
+    "severity": "P2",
+    "status": "In Progress"
+  }
+]
