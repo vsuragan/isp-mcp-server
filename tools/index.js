@@ -1,16 +1,18 @@
-module.exports = {
-    getCustomer:
-        require("./customerTool"),
-
-    getTicket:
-        require("./ticketTool"),
-
-    getDevice:
-        require("./deviceTool"),
-
-    getOpenOutages:
-        require("./outageTool"),
-
-    getNetworkHealth:
-        require("./networkHealthTool")
-};
+server.registerTool(
+    "ping",
+    {
+        title: "Ping",
+        description: "Simple test tool",
+        inputSchema: {}
+    },
+    async () => {
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: "pong"
+                }
+            ]
+        };
+    }
+);

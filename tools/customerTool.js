@@ -1,13 +1,18 @@
-const {
-    getCustomerByName
-} = require("../services/customerService");
-
-async function execute(customerName) {
-    return await getCustomerByName(customerName);
-}
-
-module.exports = {
-    name: "getCustomer",
-    description: "Get customer details by name",
-    execute
-};
+server.registerTool(
+    "ping",
+    {
+        title: "Ping",
+        description: "Simple test tool",
+        inputSchema: {}
+    },
+    async () => {
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: "pong"
+                }
+            ]
+        };
+    }
+);

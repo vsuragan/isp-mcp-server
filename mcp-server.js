@@ -22,15 +22,14 @@ const {
     getNetworkHealth
 } = require("./services/networkHealthService");
 
-console.log("Creating MCP Server...");
-
 const server = new McpServer({
     name: "isp-mcp-server",
     version: "1.0.0"
 });
 
-// CUSTOMER
-
+/*
+ * Customer Tool
+ */
 server.registerTool(
     "getCustomer",
     {
@@ -49,24 +48,21 @@ server.registerTool(
             content: [
                 {
                     type: "text",
-                    text: JSON.stringify(
-                        result,
-                        null,
-                        2
-                    )
+                    text: JSON.stringify(result, null, 2)
                 }
             ]
         };
     }
 );
 
-// TICKET
-
+/*
+ * Ticket Tool
+ */
 server.registerTool(
     "getTicket",
     {
         title: "Ticket Lookup",
-        description: "Get ticket details by title",
+        description: "Get ticket details by ticket title",
         inputSchema: {
             ticketTitle: z.string()
         }
@@ -80,24 +76,21 @@ server.registerTool(
             content: [
                 {
                     type: "text",
-                    text: JSON.stringify(
-                        result,
-                        null,
-                        2
-                    )
+                    text: JSON.stringify(result, null, 2)
                 }
             ]
         };
     }
 );
 
-// DEVICE
-
+/*
+ * Device Tool
+ */
 server.registerTool(
     "getDevice",
     {
         title: "Device Lookup",
-        description: "Get device details by name",
+        description: "Get device details by device name",
         inputSchema: {
             deviceName: z.string()
         }
@@ -111,19 +104,16 @@ server.registerTool(
             content: [
                 {
                     type: "text",
-                    text: JSON.stringify(
-                        result,
-                        null,
-                        2
-                    )
+                    text: JSON.stringify(result, null, 2)
                 }
             ]
         };
     }
 );
 
-// OUTAGES
-
+/*
+ * Open Outages Tool
+ */
 server.registerTool(
     "getOpenOutages",
     {
@@ -140,19 +130,16 @@ server.registerTool(
             content: [
                 {
                     type: "text",
-                    text: JSON.stringify(
-                        result,
-                        null,
-                        2
-                    )
+                    text: JSON.stringify(result, null, 2)
                 }
             ]
         };
     }
 );
 
-// NETWORK HEALTH
-
+/*
+ * Network Health Tool
+ */
 server.registerTool(
     "getNetworkHealth",
     {
@@ -169,11 +156,7 @@ server.registerTool(
             content: [
                 {
                     type: "text",
-                    text: JSON.stringify(
-                        result,
-                        null,
-                        2
-                    )
+                    text: JSON.stringify(result, null, 2)
                 }
             ]
         };
@@ -182,17 +165,10 @@ server.registerTool(
 
 async function main() {
 
-    console.log("Connecting transport...");
-
     const transport =
         new StdioServerTransport();
 
-    await server.connect(
-        transport
-    );
-
-    console.log("Connected");
-    console.log("ISP MCP Server Started");
+    await server.connect(transport);
 }
 
 main().catch(error => {

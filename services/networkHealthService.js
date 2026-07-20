@@ -9,7 +9,7 @@ async function getNetworkHealth() {
     const outages = await getAllOutages();
 
     const offlineDevices = devices.filter(
-        d => d.crbab_status === 602240001
+        d => d.status === "Offline"
     ).length;
 
     return {

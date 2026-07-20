@@ -1,13 +1,18 @@
-const {
-    getOpenOutages
-} = require("../services/outageService");
-
-async function execute() {
-    return await getOpenOutages();
-}
-
-module.exports = {
-    name: "getOpenOutages",
-    description: "Returns all open outages",
-    execute
-};
+server.registerTool(
+    "ping",
+    {
+        title: "Ping",
+        description: "Simple test tool",
+        inputSchema: {}
+    },
+    async () => {
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: "pong"
+                }
+            ]
+        };
+    }
+);
