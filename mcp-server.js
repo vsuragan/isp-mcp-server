@@ -1,85 +1,200 @@
-const fs = require("fs");
-const { Server } = require("@modelcontextprotocol/sdk/server/index.js");
+const { McpServer } = require("@modelcontextprotocol/sdk/server/mcp.js");
+const { StdioServerTransport } = require("@modelcontextprotocol/sdk/server/stdio.js");
+const { z } = require("zod");
 
-const server = new Server(
-  {
+const {
+    getCustomerByName
+} = require("./services/customerService");
+
+const {
+    getTicketByTitle
+} = require("./services/ticketService");
+
+const {
+    getDeviceByName
+} = require("./services/deviceService");
+
+const {
+    getOpenOutages
+} = require("./services/outageService");
+
+const {
+    getNetworkHealth
+} = require("./services/networkHealthService");
+
+console.log("Creating MCP Server...");
+
+const server = new McpServer({
     name: "isp-mcp-server",
-    version: "1.0.0",
-  },
-  {
-    capabilities: {
-      tools: {},
+    version: "1.0.0"
+});
+
+// CUSTOMER
+
+server.registerTool(
+    "getCustomer",
+    {
+        title: "Customer Lookup",
+        description: "Get customer details by customer name",
+        inputSchema: {
+            customerName: z.string()
+        }
     },
-  }
+    async ({ customerName }) => {
+
+        const result =
+            await getCustomerByName(customerName);
+
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: JSON.stringify(
+                        result,
+                        null,
+                        2
+                    )
+                }
+            ]
+        };
+    }
 );
 
-const tickets = JSON.parse(
-  fs.readFileSync("./data/tickets.json", "utf8")
+// TICKET
+
+server.registerTool(
+    "getTicket",
+    {
+        title: "Ticket Lookup",
+        description: "Get ticket details by title",
+        inputSchema: {
+            ticketTitle: z.string()
+        }
+    },
+    async ({ ticketTitle }) => {
+
+        const result =
+            await getTicketByTitle(ticketTitle);
+
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: JSON.stringify(
+                        result,
+                        null,
+                        2
+                    )
+                }
+            ]
+        };
+    }
 );
 
-const customers = JSON.parse(
-  fs.readFileSync("./data/customers.json", "utf8")
+// DEVICE
+
+server.registerTool(
+    "getDevice",
+    {
+        title: "Device Lookup",
+        description: "Get device details by name",
+        inputSchema: {
+            deviceName: z.string()
+        }
+    },
+    async ({ deviceName }) => {
+
+        const result =
+            await getDeviceByName(deviceName);
+
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: JSON.stringify(
+                        result,
+                        null,
+                        2
+                    )
+                }
+            ]
+        };
+    }
 );
 
-const { getCustomerFromDataverse } = require("./dataverse");
+// OUTAGES
 
-getCustomerFromDataverse("CUST001");
+server.registerTool(
+    "getOpenOutages",
+    {
+        title: "Open Outages",
+        description: "Returns all open outages",
+        inputSchema: {}
+    },
+    async () => {
 
-function getTicketStatus(ticketNumber) {
-  return tickets.find(
-    t => t.ticketNumber === ticketNumber
-  ) || "Ticket not found";
-}
+        const result =
+            await getOpenOutages();
 
-function getOpenTickets() {
-  return tickets.filter(
-    t => t.status !== "Resolved"
-  );
-}
-
-function getCustomer(customerId) {
-  return customers.find(
-    c => c.customerId === customerId
-  ) || "Customer not found";
-}
-
-
-
-const devices = JSON.parse(
-  fs.readFileSync("./data/devices.json", "utf8")
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: JSON.stringify(
+                        result,
+                        null,
+                        2
+                    )
+                }
+            ]
+        };
+    }
 );
 
-function getDeviceStatus(deviceId) {
-  return devices.find(
-    d => d.deviceId === deviceId
-  ) || "Device not found";
+// NETWORK HEALTH
+
+server.registerTool(
+    "getNetworkHealth",
+    {
+        title: "Network Health",
+        description: "Returns overall ISP network health",
+        inputSchema: {}
+    },
+    async () => {
+
+        const result =
+            await getNetworkHealth();
+
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: JSON.stringify(
+                        result,
+                        null,
+                        2
+                    )
+                }
+            ]
+        };
+    }
+);
+
+async function main() {
+
+    console.log("Connecting transport...");
+
+    const transport =
+        new StdioServerTransport();
+
+    await server.connect(
+        transport
+    );
+
+    console.log("Connected");
+    console.log("ISP MCP Server Started");
 }
 
-
-const tools = {
-  getCustomer,
-  getTicketStatus,
-  getOpenTickets
-};
-
-const command = process.argv[2];
-const value = process.argv[3];
-
-if (command === "getCustomer") {
-  console.log(getCustomer(value));
-}
-else if (command === "getTicketStatus") {
-  console.log(getTicketStatus(value));
-}
-else if (command === "getOpenTickets") {
-  console.log(getOpenTickets());
-}
-else if (command === "getDeviceStatus") {
-  console.log(getDeviceStatus(value));
-}
-else {
-  console.log("Available Tools:");
-  console.log("getCustomer <customerId>");
-  console.log("getTicketStatus <ticketNumber>");
-  console.log("getOpenTickets");
-}
+main().catch(error => {
+    console.error(error);
+});
