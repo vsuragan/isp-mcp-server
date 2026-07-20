@@ -22,9 +22,9 @@ const {
 
 const {
     getOpenOutages,
-    getCriticalOutages
+    getCriticalOutages,
+    getAffectedRegions
 } = require("./services/outageService");
-
 
 const server = new McpServer({
     name: "isp-mcp-server",
@@ -140,7 +140,8 @@ server.registerTool(
     "getOfflineDevices",
     {
         title: "Offline Devices",
-        description: "Returns all devices currently offline",
+        description:
+    "Use this tool when a user asks which network devices are down, unavailable, offline, or experiencing outages.",
         inputSchema: {}
     },
     async () => {
@@ -205,6 +206,39 @@ server.registerTool(
     }
 );
 
+
+/*
+ * Affected Regions Tool
+ */
+server.registerTool(
+    "getAffectedRegions",
+    {
+        title: "Affected Regions",
+        description:
+            "Returns all regions currently affected by open outages",
+        inputSchema: {}
+    },
+    async () => {
+
+        const result =
+            await getAffectedRegions();
+
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: JSON.stringify(
+                        result,
+                        null,
+                        2
+                    )
+                }
+            ]
+        };
+    }
+);
+
+
 /*
  * Operations Summary Tool
  */
@@ -264,7 +298,7 @@ server.registerTool(
     {
         title: "Executive Dashboard",
         description:
-            "Returns executive-level operational metrics and customer impact",
+    "Use this tool when a user asks for an executive summary, operational overview, customer impact assessment, or leadership dashboard.",
         inputSchema: {}
     },
     async () => {

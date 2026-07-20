@@ -55,15 +55,37 @@ async function getOpenOutages() {
 
 async function getCriticalOutages() {
 
-    const outages = await getOpenOutages();
+    const outages =
+        await getOpenOutages();
 
     return outages.filter(
         outage => outage.severity === "Critical"
     );
 }
 
+async function getAffectedRegions() {
+
+    const outages =
+        await getOpenOutages();
+
+    const regions = [
+        ...new Set(
+            outages.map(
+                outage => outage.region
+            )
+        )
+    ].sort();
+
+    return {
+        regions,
+        totalRegionsAffected:
+            regions.length
+    };
+}
+
 module.exports = {
     getAllOutages,
     getOpenOutages,
-    getCriticalOutages
+    getCriticalOutages,
+    getAffectedRegions
 };
