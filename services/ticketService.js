@@ -24,6 +24,16 @@ async function getAllTickets() {
     }));
 }
 
+async function getOpenTickets() {
+
+    const tickets =
+        await getAllTickets();
+
+    return tickets.filter(
+        ticket => ticket.status !== "Resolved"
+    );
+}
+
 async function getTicketByTitle(ticketTitle) {
 
     const query =
@@ -54,5 +64,6 @@ async function getTicketByTitle(ticketTitle) {
 
 module.exports = {
     getAllTickets,
+    getOpenTickets,
     getTicketByTitle
 };

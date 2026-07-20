@@ -53,7 +53,17 @@ async function getOpenOutages() {
     }));
 }
 
+async function getCriticalOutages() {
+
+    const outages = await getOpenOutages();
+
+    return outages.filter(
+        outage => outage.severity === "Critical"
+    );
+}
+
 module.exports = {
     getAllOutages,
-    getOpenOutages
+    getOpenOutages,
+    getCriticalOutages
 };

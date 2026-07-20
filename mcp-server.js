@@ -7,20 +7,24 @@ const {
 } = require("./services/customerService");
 
 const {
-    getTicketByTitle
+    getTicketByTitle,
+    getOpenTickets
 } = require("./services/ticketService");
-
 const {
-    getDeviceByName
+    getNetworkHealth,
+    getOperationsSummary,
+    getExecutiveDashboard
+} = require("./services/networkHealthService");
+const {
+    getDeviceByName,
+    getOfflineDevices
 } = require("./services/deviceService");
 
 const {
-    getOpenOutages
+    getOpenOutages,
+    getCriticalOutages
 } = require("./services/outageService");
 
-const {
-    getNetworkHealth
-} = require("./services/networkHealthService");
 
 const server = new McpServer({
     name: "isp-mcp-server",
@@ -40,9 +44,7 @@ server.registerTool(
         }
     },
     async ({ customerName }) => {
-
-        const result =
-            await getCustomerByName(customerName);
+        const result = await getCustomerByName(customerName);
 
         return {
             content: [
@@ -68,9 +70,31 @@ server.registerTool(
         }
     },
     async ({ ticketTitle }) => {
+        const result = await getTicketByTitle(ticketTitle);
 
-        const result =
-            await getTicketByTitle(ticketTitle);
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: JSON.stringify(result, null, 2)
+                }
+            ]
+        };
+    }
+);
+
+/*
+ * Open Tickets Tool
+ */
+server.registerTool(
+    "getOpenTickets",
+    {
+        title: "Open Tickets",
+        description: "Returns all unresolved tickets",
+        inputSchema: {}
+    },
+    async () => {
+        const result = await getOpenTickets();
 
         return {
             content: [
@@ -96,9 +120,31 @@ server.registerTool(
         }
     },
     async ({ deviceName }) => {
+        const result = await getDeviceByName(deviceName);
 
-        const result =
-            await getDeviceByName(deviceName);
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: JSON.stringify(result, null, 2)
+                }
+            ]
+        };
+    }
+);
+
+/*
+ * Offline Devices Tool
+ */
+server.registerTool(
+    "getOfflineDevices",
+    {
+        title: "Offline Devices",
+        description: "Returns all devices currently offline",
+        inputSchema: {}
+    },
+    async () => {
+        const result = await getOfflineDevices();
 
         return {
             content: [
@@ -122,9 +168,56 @@ server.registerTool(
         inputSchema: {}
     },
     async () => {
+        const result = await getOpenOutages();
 
-        const result =
-            await getOpenOutages();
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: JSON.stringify(result, null, 2)
+                }
+            ]
+        };
+    }
+);
+
+/*
+ * Critical Outages Tool
+ */
+server.registerTool(
+    "getCriticalOutages",
+    {
+        title: "Critical Outages",
+        description: "Returns all open outages with Critical severity",
+        inputSchema: {}
+    },
+    async () => {
+        const result = await getCriticalOutages();
+
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: JSON.stringify(result, null, 2)
+                }
+            ]
+        };
+    }
+);
+
+/*
+ * Operations Summary Tool
+ */
+server.registerTool(
+    "getOperationsSummary",
+    {
+        title: "Operations Summary",
+        description:
+            "Returns an executive summary of network operations including outages, offline devices and affected customers",
+        inputSchema: {}
+    },
+    async () => {
+        const result = await getOperationsSummary();
 
         return {
             content: [
@@ -144,13 +237,12 @@ server.registerTool(
     "getNetworkHealth",
     {
         title: "Network Health",
-        description: "Returns overall ISP network health",
+        description:
+            "Returns overall network health including outages, tickets, devices and offline device count",
         inputSchema: {}
     },
     async () => {
-
-        const result =
-            await getNetworkHealth();
+        const result = await getNetworkHealth();
 
         return {
             content: [
@@ -163,10 +255,40 @@ server.registerTool(
     }
 );
 
-async function main() {
+/*
+ * Executive Dashboard Tool
+ */
 
-    const transport =
-        new StdioServerTransport();
+server.registerTool(
+    "getExecutiveDashboard",
+    {
+        title: "Executive Dashboard",
+        description:
+            "Returns executive-level operational metrics and customer impact",
+        inputSchema: {}
+    },
+    async () => {
+
+        const result =
+            await getExecutiveDashboard();
+
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: JSON.stringify(
+                        result,
+                        null,
+                        2
+                    )
+                }
+            ]
+        };
+    }
+);
+
+async function main() {
+    const transport = new StdioServerTransport();
 
     await server.connect(transport);
 }

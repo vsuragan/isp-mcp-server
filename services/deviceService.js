@@ -48,7 +48,17 @@ async function getDeviceByName(deviceName) {
     };
 }
 
+async function getOfflineDevices() {
+
+    const devices = await getAllDevices();
+
+    return devices.filter(
+        device => device.status === "Offline"
+    );
+}
+
 module.exports = {
     getAllDevices,
-    getDeviceByName
+    getDeviceByName,
+    getOfflineDevices
 };
