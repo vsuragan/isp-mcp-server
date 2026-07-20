@@ -10,11 +10,7 @@ const {
     getTicketByTitle,
     getOpenTickets
 } = require("./services/ticketService");
-const {
-    getNetworkHealth,
-    getOperationsSummary,
-    getExecutiveDashboard
-} = require("./services/networkHealthService");
+
 const {
     getDeviceByName,
     getOfflineDevices
@@ -26,9 +22,15 @@ const {
     getAffectedRegions
 } = require("./services/outageService");
 
+const {
+    getNetworkHealth,
+    getOperationsSummary,
+    getExecutiveDashboard
+} = require("./services/networkHealthService");
+
 const server = new McpServer({
     name: "isp-mcp-server",
-    version: "1.0.0"
+    version: "3.0.0"
 });
 
 /*
@@ -38,13 +40,16 @@ server.registerTool(
     "getCustomer",
     {
         title: "Customer Lookup",
-        description: "Get customer details by customer name",
+        description:
+            "Use when a user asks about a customer account, customer details, customer status, service type, or customer location.",
         inputSchema: {
             customerName: z.string()
         }
     },
     async ({ customerName }) => {
-        const result = await getCustomerByName(customerName);
+
+        const result =
+            await getCustomerByName(customerName);
 
         return {
             content: [
@@ -58,19 +63,22 @@ server.registerTool(
 );
 
 /*
- * Ticket Tool
+ * Ticket Lookup Tool
  */
 server.registerTool(
     "getTicket",
     {
         title: "Ticket Lookup",
-        description: "Get ticket details by ticket title",
+        description:
+            "Use when a user asks about a specific support ticket, issue, incident, service request, or case.",
         inputSchema: {
             ticketTitle: z.string()
         }
     },
     async ({ ticketTitle }) => {
-        const result = await getTicketByTitle(ticketTitle);
+
+        const result =
+            await getTicketByTitle(ticketTitle);
 
         return {
             content: [
@@ -90,11 +98,14 @@ server.registerTool(
     "getOpenTickets",
     {
         title: "Open Tickets",
-        description: "Returns all unresolved tickets",
+        description:
+            "Use when a user asks about open, active, unresolved, pending, or in-progress support tickets.",
         inputSchema: {}
     },
     async () => {
-        const result = await getOpenTickets();
+
+        const result =
+            await getOpenTickets();
 
         return {
             content: [
@@ -108,19 +119,22 @@ server.registerTool(
 );
 
 /*
- * Device Tool
+ * Device Lookup Tool
  */
 server.registerTool(
     "getDevice",
     {
         title: "Device Lookup",
-        description: "Get device details by device name",
+        description:
+            "Use when a user asks about a specific network device, router, switch, OLT, firewall, or infrastructure component.",
         inputSchema: {
             deviceName: z.string()
         }
     },
     async ({ deviceName }) => {
-        const result = await getDeviceByName(deviceName);
+
+        const result =
+            await getDeviceByName(deviceName);
 
         return {
             content: [
@@ -141,11 +155,13 @@ server.registerTool(
     {
         title: "Offline Devices",
         description:
-    "Use this tool when a user asks which network devices are down, unavailable, offline, or experiencing outages.",
+            "Use when a user asks which network devices are down, unavailable, offline, unreachable, or experiencing connectivity issues.",
         inputSchema: {}
     },
     async () => {
-        const result = await getOfflineDevices();
+
+        const result =
+            await getOfflineDevices();
 
         return {
             content: [
@@ -165,11 +181,14 @@ server.registerTool(
     "getOpenOutages",
     {
         title: "Open Outages",
-        description: "Returns all open outages",
+        description:
+            "Use when a user asks about active outages, network incidents, service disruptions, impacted customers, or outage details.",
         inputSchema: {}
     },
     async () => {
-        const result = await getOpenOutages();
+
+        const result =
+            await getOpenOutages();
 
         return {
             content: [
@@ -189,11 +208,14 @@ server.registerTool(
     "getCriticalOutages",
     {
         title: "Critical Outages",
-        description: "Returns all open outages with Critical severity",
+        description:
+            "Use when a user asks about severe outages, major service disruptions, critical incidents, or high-impact network events.",
         inputSchema: {}
     },
     async () => {
-        const result = await getCriticalOutages();
+
+        const result =
+            await getCriticalOutages();
 
         return {
             content: [
@@ -206,7 +228,6 @@ server.registerTool(
     }
 );
 
-
 /*
  * Affected Regions Tool
  */
@@ -215,7 +236,7 @@ server.registerTool(
     {
         title: "Affected Regions",
         description:
-            "Returns all regions currently affected by open outages",
+            "Use when a user asks which regions, cities, locations, or service areas are currently impacted by outages.",
         inputSchema: {}
     },
     async () => {
@@ -227,17 +248,12 @@ server.registerTool(
             content: [
                 {
                     type: "text",
-                    text: JSON.stringify(
-                        result,
-                        null,
-                        2
-                    )
+                    text: JSON.stringify(result, null, 2)
                 }
             ]
         };
     }
 );
-
 
 /*
  * Operations Summary Tool
@@ -247,11 +263,13 @@ server.registerTool(
     {
         title: "Operations Summary",
         description:
-            "Returns an executive summary of network operations including outages, offline devices and affected customers",
+            "Use when a user asks for an operational overview, outage summary, network status review, customer impact summary, or operations dashboard.",
         inputSchema: {}
     },
     async () => {
-        const result = await getOperationsSummary();
+
+        const result =
+            await getOperationsSummary();
 
         return {
             content: [
@@ -272,11 +290,13 @@ server.registerTool(
     {
         title: "Network Health",
         description:
-            "Returns overall network health including outages, tickets, devices and offline device count",
+            "Use when a user asks about network health, service health, operational status, outage counts, ticket volume, or device availability.",
         inputSchema: {}
     },
     async () => {
-        const result = await getNetworkHealth();
+
+        const result =
+            await getNetworkHealth();
 
         return {
             content: [
@@ -292,13 +312,12 @@ server.registerTool(
 /*
  * Executive Dashboard Tool
  */
-
 server.registerTool(
     "getExecutiveDashboard",
     {
         title: "Executive Dashboard",
         description:
-    "Use this tool when a user asks for an executive summary, operational overview, customer impact assessment, or leadership dashboard.",
+            "Use when a user asks for an executive summary, leadership dashboard, customer impact assessment, high-level operational review, or business status report.",
         inputSchema: {}
     },
     async () => {
@@ -310,11 +329,7 @@ server.registerTool(
             content: [
                 {
                     type: "text",
-                    text: JSON.stringify(
-                        result,
-                        null,
-                        2
-                    )
+                    text: JSON.stringify(result, null, 2)
                 }
             ]
         };
@@ -322,7 +337,9 @@ server.registerTool(
 );
 
 async function main() {
-    const transport = new StdioServerTransport();
+
+    const transport =
+        new StdioServerTransport();
 
     await server.connect(transport);
 }
